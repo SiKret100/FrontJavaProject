@@ -19,9 +19,10 @@
                   <Font name="Helvetica Neue Bold" size="20.0" />
                </font>
             </Label>
-            <Separator prefHeight="29.0" prefWidth="384.0" visible="false" />
-            <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
+            <Separator prefHeight="29.0" prefWidth="336.0" visible="false" />
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#addHousingPrice" text="Save" />
             <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleDashboardRedirect" text="Back" />
+            <Button fx:id="testButton" mnemonicParsing="false" onAction="#handleGetLastYear" text="Test" />
          </items>
       </ToolBar>
    </top>

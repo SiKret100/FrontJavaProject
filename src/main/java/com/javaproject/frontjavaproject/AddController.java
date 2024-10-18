@@ -6,14 +6,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.skin.ChoiceBoxSkin;
 import javafx.stage.Stage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class AddController implements Initializable {
@@ -39,11 +44,14 @@ public class AddController implements Initializable {
     @FXML
     private TextField fieldPrice;
 
-    private final String[] regions = {"POLSKA","LUBELSKIE", "MAZOWIECKIE", "MAŁOPOLSKIE",
+    @FXML
+    private Button testButton;
+
+    private final String[] regions = {"POLSKA", "LUBELSKIE", "MAZOWIECKIE", "MAŁOPOLSKIE",
             "ŚLĄSKIE", "LUBUSKIE", "WIELKOPOLSKIE", "ZACHODNIOPOMORSKIE", "DOLNOŚLĄSKIE", "OPOLSKIE", "KUJAWSKO-POMORSKIE",
             "POMORSKIE", "ŁODZKIE", "ŚWIĘTOKRZYSKIE", "PODKARPACKIE", "PODLASKIE", "MAZOWIECKIE"};
 
-    private final String[] markets = {"OBA RYNKI", "RYNEK WTÓRNY", "RYNEK PIERWOTNY"};
+    private final String[] markets = {"RYNEK WTÓRNY", "RYNEK PIERWOTNY"};
 
     private final String[] types = {"DO 40 M2", "OD 40,1 DO 60 M2", "OD 60,1 DO 80 M2", "OD 80,1 M2"};
 
@@ -97,7 +105,37 @@ public class AddController implements Initializable {
         stage.show();
     }
 
-    private void AddHousingPice(ActionEvent event) throws IOException {
+    public void addHousingPrice(ActionEvent event) {
+        String region = choiceRegion.getValue();
+        String market = choiceMarket.getValue().toLowerCase();
+        String type = choiceType.getValue().toLowerCase();
+        String price = fieldPrice.getText();
 
+        try {
+            HousingController.addHousingPrice(region, market, type, price);
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Housing price added successfully.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+        }
+    }
+
+    public Integer handleGetLastYear(ActionEvent event) {
+        String region = choiceRegion.getValue();
+        String market = choiceMarket.getValue().toLowerCase();
+        String type = choiceType.getValue().toLowerCase();
+
+        try {
+            return HousingController.getLastYear(region, market, type);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            return null;
+        }
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
