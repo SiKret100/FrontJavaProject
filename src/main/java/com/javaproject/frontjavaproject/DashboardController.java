@@ -42,6 +42,9 @@ public class DashboardController implements Initializable {
     @FXML
     private Button addButton;
 
+    @FXML
+    private Button showRecordsButton;
+
 //    @FXML
 //    private Label choiceRegionLabel;
 
@@ -200,6 +203,23 @@ public class DashboardController implements Initializable {
     public void handleAddRedirect(ActionEvent event) throws IOException {
         loadAddScene(event);
     }
+
+    public void handleShowRedirect(ActionEvent event) throws IOException {
+        loadShowScene(event);
+    }
+
+    private void loadShowScene(ActionEvent event) throws IOException {
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("show-view.fxml"));
+        Scene dashboardScene = new Scene(fxmlLoader.load());
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(dashboardScene);
+        stage.setTitle("Sgow");
+        stage.show();
+    }
+
+
 
     private void loadAddScene(ActionEvent event) throws IOException {
 

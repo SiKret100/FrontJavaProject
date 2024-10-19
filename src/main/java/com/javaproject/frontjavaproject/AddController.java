@@ -114,6 +114,11 @@ public class AddController implements Initializable {
         try {
             HousingController.addHousingPrice(region, market, type, price);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Housing price added successfully.");
+            choiceRegion.setValue("Choose Region");
+            choiceMarket.setValue("Choose Market");
+            choiceType.setValue("Choose Type");
+
+
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
         }

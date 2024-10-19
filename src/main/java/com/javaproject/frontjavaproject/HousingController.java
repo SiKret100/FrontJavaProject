@@ -1,19 +1,6 @@
 package com.javaproject.frontjavaproject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
-
+import javafx.scene.control.Alert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,18 +12,28 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 public class HousingController {
 
     public static JSONArray fetchHousing(String region, String market, String type, JSONArray combinedResponse) throws IOException, RuntimeException {
 
-        String encodedRegion = URLEncoder.encode(region, StandardCharsets.UTF_8.toString());
-        String encodedMarket = URLEncoder.encode(market, StandardCharsets.UTF_8.toString());
-        String encodedType = URLEncoder.encode(type, StandardCharsets.UTF_8.toString());
+        String encodedRegion;
+        String encodedMarket;
+        String encodedType;
+        String MarketUrl;
 
-        String MarketUrl = String.format(
-                "http://localhost:8080/api/housingPrices/?name=%s&transaction=%s&surface=%s",
-                encodedRegion, encodedMarket, encodedType);
+        if(region != null && market != null && type != null) {
+            encodedRegion = URLEncoder.encode(region, StandardCharsets.UTF_8.toString());
+            encodedMarket = URLEncoder.encode(market, StandardCharsets.UTF_8.toString());
+            encodedType = URLEncoder.encode(type, StandardCharsets.UTF_8.toString());
+            MarketUrl = String.format(
+                    "http://localhost:8080/api/housingPrices/?name=%s&transaction=%s&surface=%s",
+                    encodedRegion, encodedMarket, encodedType);
+
+        }else{
+            MarketUrl = "http://localhost:8080/api/housingPrices/";
+        }
 
         URL secondaryUrl = new URL(MarketUrl);
         HttpURLConnection connection = (HttpURLConnection) secondaryUrl.openConnection();
@@ -59,9 +56,11 @@ public class HousingController {
             in.close();
 
             JSONArray response = new JSONArray(responseBuilder.toString());
+
             for (int i = 0; i < response.length(); i++) {
                 combinedResponse.put(response.getJSONObject(i));
             }
+
 
             return combinedResponse;
 
@@ -70,71 +69,146 @@ public class HousingController {
         }
     }
 
-    public static void addHousingPrice(String region, String market, String type, String price) throws IOException, RuntimeException {
+    public static void addHousingPrice(String region, String market, String type, String price) throws Exception, RuntimeException {
+        try {
 
-        if (!checkForm(region, market, type, price)) {
-            throw new IllegalArgumentException("Form validation failed. Housing price not added.");
+            checkForm(region, market, type, price);
+
+            String encodedRegion = URLEncoder.encode(region, StandardCharsets.UTF_8.toString());
+            String encodedMarket = URLEncoder.encode(market, StandardCharsets.UTF_8.toString());
+            String encodedType = URLEncoder.encode(type, StandardCharsets.UTF_8.toString());
+
+            Integer lastYear = getLastYear(region, market, type);
+
+            if (lastYear == -1) {
+                throw new RuntimeException("Error getting last year.");
+            }
+
+            JSONObject housingData = new JSONObject();
+            housingData.put("name", region);
+            housingData.put("transaction", market);
+            housingData.put("surface", type);
+            housingData.put("year", lastYear + 1);
+            housingData.put("price", Integer.parseInt(price));
+
+            String apiUrl = "http://localhost:8080/api/housingPrices/";
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            String token = AuthManager.getToken();
+            if (token != null && !token.isEmpty()) {
+                connection.setRequestProperty("Authorization", "Bearer " + token);
+            }
+
+            OutputStream os = connection.getOutputStream();
+            os.write(housingData.toString().getBytes(StandardCharsets.UTF_8));
+            os.close();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
+                throw new IOException("Failed to add housing price. Response code: " + responseCode);
+            }
+        } catch (Exception e) {
+            throw new Exception("Failed to add housing price: " + e.getMessage(), e);
         }
 
-        String encodedRegion = URLEncoder.encode(region, StandardCharsets.UTF_8.toString());
-        String encodedMarket = URLEncoder.encode(market, StandardCharsets.UTF_8.toString());
-        String encodedType = URLEncoder.encode(type, StandardCharsets.UTF_8.toString());
+    }
 
-        Integer lastYear = getLastYear(region, market, type);
+    public static Integer getLastYear(String region, String market, String type) throws Exception {
 
-        if (lastYear == -1) {
-            throw new RuntimeException("Error getting last year.");
+        try{
+            JSONArray combinedResponse = new JSONArray();
+            combinedResponse = fetchHousing(region, market, type, combinedResponse);
+            return combinedResponse.getJSONObject(combinedResponse.length() - 1).getInt("year");
+        } catch (Exception e) {
+            throw new Exception("Failed to get last year.", e);
         }
 
-        JSONObject housingData = new JSONObject();
-        housingData.put("name", region);
-        housingData.put("transaction", market);
-        housingData.put("surface", type);
-        housingData.put("year", lastYear + 1);
-        housingData.put("price", Integer.parseInt(price));
+    }
 
-        String apiUrl = "http://localhost:8080/api/housingPrices/";
-        URL url = new URL(apiUrl);
+    public static void checkForm(String region, String market, String type, String price) {
+        if (region != null && !region.equals("Choose Region") &&
+                market != null && !market.equals("Choose Market") &&
+                type != null && !type.equals("Choose Type") &&
+                price != null && !price.isBlank()) {
+                Integer.parseInt(price);
+//            try {
+//                Integer.parseInt(price);
+//            } catch (NumberFormatException e) {
+//                System.out.println("RZUCAM");
+//                throw new IllegalArgumentException("Invalid price format: " + price);
+//            }
+        } else {
+            throw new IllegalArgumentException("One or more fields have default values or are empty.");
+        }
+    }
+
+
+
+    public static void updateHousingRecord(HousingPricesModel record) throws Exception {
+        try{
+            checkForm(record.getName(), record.getTransaction(), record.getSurface(), record.getPrice().toString());
+            String urlString = "http://localhost:8080/api/housingPrices/" + record.getId();
+            System.out.println(urlString);
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            String token = AuthManager.getToken();
+            if (token != null && !token.isEmpty()) {
+                connection.setRequestProperty("Authorization", "Bearer " + token);
+            }
+
+
+            JSONObject json = new JSONObject();
+            json.put("name", record.getName());
+            json.put("transaction", record.getTransaction());
+            json.put("surface", record.getSurface());
+            json.put("year", record.getYear());
+            json.put("price", record.getPrice());
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = json.toString().getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+            catch(Exception e) {
+                throw new Exception("Failed to update housing record:" + e.getMessage(), e);
+            }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new IOException("Failed to update record: HTTP response code " + responseCode);
+            }
+        }catch (Exception e) {
+
+            System.out.println("Failed to update record: " + e.getMessage());
+            throw new Exception("Failed to update " + e.getMessage(), e);
+
+        }
+
+    }
+
+    public static void deleteHousingRecord(int id) throws Exception {
+        String urlString  = "http://localhost:8080/api/housingPrices/" + id;
+        URL url = new URL(urlString);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
+        connection.setRequestMethod("DELETE");
 
         String token = AuthManager.getToken();
         if (token != null && !token.isEmpty()) {
             connection.setRequestProperty("Authorization", "Bearer " + token);
         }
 
-        OutputStream os = connection.getOutputStream();
-        os.write(housingData.toString().getBytes(StandardCharsets.UTF_8));
-        os.close();
-
         int responseCode = connection.getResponseCode();
-        if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
-            throw new IOException("Failed to add housing price. Response code: " + responseCode);
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            throw new IOException("Failed to delete record: HTTP response code " + responseCode);
         }
     }
 
-    public static Integer getLastYear(String region, String market, String type) throws IOException {
 
-        JSONArray combinedResponse = new JSONArray();
-        combinedResponse = fetchHousing(region, market, type, combinedResponse);
-        return combinedResponse.getJSONObject(combinedResponse.length() - 1).getInt("year");
-    }
-
-    public static Boolean checkForm(String region, String market, String type, String price) {
-        if (region != null && !region.equals("Choose Region") &&
-                market != null && !market.equals("Choose Market") &&
-                type != null && !type.equals("Choose Type") &&
-                price != null && !price.isBlank()) {
-            try {
-                Integer.parseInt(price);
-                return true;
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid price format: " + price);
-            }
-        } else {
-            throw new IllegalArgumentException("One or more fields have default values or are empty.");
-        }
-    }
 }

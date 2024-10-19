@@ -24,8 +24,9 @@
             <ChoiceBox fx:id="choiceRegion" prefHeight="25.0" prefWidth="140.0" />
             <ChoiceBox fx:id="choiceMarket" prefHeight="25.0" prefWidth="140.0" />
             <ChoiceBox fx:id="choiceType" prefHeight="25.0" prefWidth="140.0" />
-            <Button fx:id="fetchButton" mnemonicParsing="false" onAction="#fetchHousingPrices" text="Fetch Data" />
+            <Button fx:id="fetchButton" mnemonicParsing="false" onAction="#fetchHousingPrices" text="Show chart" />
             <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddRedirect" text="Add Data" />
+            <Button fx:id="showRecordsButton" mnemonicParsing="false" onAction="#handleShowRedirect" text="Show records" />
         </items>
       </ToolBar>
    </top>
