@@ -13,27 +13,43 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.StringJoiner;
 
 public class HousingController {
 
     public static JSONArray fetchHousing(String region, String market, String type, JSONArray combinedResponse) throws IOException, RuntimeException {
 
-        String encodedRegion;
-        String encodedMarket;
-        String encodedType;
+        String encodedRegion;//name
+        String encodedMarket;//transaction
+        String encodedType;//surface
         String MarketUrl;
 
-        if(region != null && market != null && type != null) {
-            encodedRegion = URLEncoder.encode(region, StandardCharsets.UTF_8.toString());
-            encodedMarket = URLEncoder.encode(market, StandardCharsets.UTF_8.toString());
-            encodedType = URLEncoder.encode(type, StandardCharsets.UTF_8.toString());
-            MarketUrl = String.format(
-                    "http://localhost:8080/api/housingPrices/?name=%s&transaction=%s&surface=%s",
-                    encodedRegion, encodedMarket, encodedType);
-
-        }else{
+        if(region == null && market == null && type == null) {
             MarketUrl = "http://localhost:8080/api/housingPrices/";
+        } else {
+
+            StringJoiner queryParams = new StringJoiner("&");
+
+            if(region != null) {
+                encodedRegion = URLEncoder.encode(region, StandardCharsets.UTF_8.toString());
+                queryParams.add("name=" + encodedRegion);
+            }
+
+            if(market != null) {
+                encodedMarket = URLEncoder.encode(market, StandardCharsets.UTF_8.toString());
+                queryParams.add("transaction=" + encodedMarket);
+            }
+
+            if(type != null) {
+                encodedType = URLEncoder.encode(type, StandardCharsets.UTF_8.toString());
+                queryParams.add("surface=" + encodedType);
+            }
+
+            MarketUrl = "http://localhost:8080/api/housingPrices/?" + queryParams.toString();
+
         }
+
+        System.out.println(MarketUrl);
 
         URL secondaryUrl = new URL(MarketUrl);
         HttpURLConnection connection = (HttpURLConnection) secondaryUrl.openConnection();
@@ -146,8 +162,6 @@ public class HousingController {
         }
     }
 
-
-
     public static void updateHousingRecord(HousingPricesModel record) throws Exception {
         try{
             checkForm(record.getName(), record.getTransaction(), record.getSurface(), record.getPrice().toString());
@@ -212,3 +226,4 @@ public class HousingController {
 
 
 }
+

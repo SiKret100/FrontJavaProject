@@ -73,7 +73,7 @@ public class AddController implements Initializable {
         choiceType.setOnAction(this::getType);
         choiceType.setValue("Choose Type");
 
-        //fieldPrive
+        //fieldPrice
         fieldPrice.setPromptText("Set price");
 
     }
@@ -90,19 +90,10 @@ public class AddController implements Initializable {
         String myMarket = choiceMarket.getValue().toLowerCase();
     }
 
-    public void handleDashboardRedirect(ActionEvent event) throws IOException {
-        loadDashboardScene(event);
-    }
-
-    private void loadDashboardScene(ActionEvent event) throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("dashboard-view.fxml"));
-        Scene dashboardScene = new Scene(fxmlLoader.load());
+    public void loadDashboardScene(ActionEvent event) throws IOException {
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(dashboardScene);
-        stage.setTitle("Add");
-        stage.show();
+        Router.loadScene(stage, "dashboard");
     }
 
     public void addHousingPrice(ActionEvent event) {
@@ -113,34 +104,20 @@ public class AddController implements Initializable {
 
         try {
             HousingController.addHousingPrice(region, market, type, price);
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Housing price added successfully.");
+            AlertManager.showAlert(Alert.AlertType.INFORMATION, "Success", "Housing price added successfully.");
+            NotificationClass.createPopup("Dodano",   (Stage) ((Node) event.getSource()).getScene().getWindow());
+
             choiceRegion.setValue("Choose Region");
             choiceMarket.setValue("Choose Market");
             choiceType.setValue("Choose Type");
+            fieldPrice.clear();
+            fieldPrice.setPromptText("Set price");
+
 
 
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
         }
     }
 
-    public Integer handleGetLastYear(ActionEvent event) {
-        String region = choiceRegion.getValue();
-        String market = choiceMarket.getValue().toLowerCase();
-        String type = choiceType.getValue().toLowerCase();
-
-        try {
-            return HousingController.getLastYear(region, market, type);
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
-            return null;
-        }
-    }
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }

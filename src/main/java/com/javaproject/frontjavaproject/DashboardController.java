@@ -96,8 +96,6 @@ public class DashboardController implements Initializable {
         //choiceRegionLabel.setText(myMarket);
     }
 
-    //barChart section
-
     public void checkAllSelectionAndFetch(ActionEvent actionEvent) throws Exception {
         String selectedRegion = choiceRegion.getValue();
         String selectedMarket = choiceMarket.getValue();
@@ -136,7 +134,7 @@ public class DashboardController implements Initializable {
             updateLineChart(combinedResponse);
 
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
         }
     }
 
@@ -200,10 +198,6 @@ public class DashboardController implements Initializable {
 
     }
 
-    public void handleAddRedirect(ActionEvent event) throws IOException {
-        loadAddScene(event);
-    }
-
     public void handleShowRedirect(ActionEvent event) throws IOException {
         loadShowScene(event);
     }
@@ -215,29 +209,16 @@ public class DashboardController implements Initializable {
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(dashboardScene);
-        stage.setTitle("Sgow");
+        stage.setTitle("Show");
         stage.show();
     }
 
-
-
-    private void loadAddScene(ActionEvent event) throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("add-view.fxml"));
-        Scene dashboardScene = new Scene(fxmlLoader.load());
+    public void loadAddScene(ActionEvent event) throws IOException {
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(dashboardScene);
-        stage.setTitle("Add");
-        stage.show();
+        Router.loadScene(stage, "add");
     }
 
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }
 

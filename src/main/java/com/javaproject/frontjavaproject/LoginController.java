@@ -85,29 +85,14 @@ public class LoginController {
 
     }
 
-    public void handleRegisterRedirect(ActionEvent event) throws IOException {
-        loadRegisterScene(event);
-    }
-
     private void loadDashboardScene(ActionEvent event) throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("dashboard-view.fxml"));
-        Scene dashboardScene = new Scene(fxmlLoader.load());
-
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(dashboardScene);
-        stage.setTitle("Dashboard");
-        stage.show();
+        Router.loadScene(stage, "dashboard");
     }
 
-    private void loadRegisterScene(ActionEvent event) throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("register-view.fxml"));
-        Scene dashboardScene = new Scene(fxmlLoader.load(), 600, 400);
-
+    public void loadRegisterScene(ActionEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(dashboardScene);
-        stage.setTitle("Register");
-        stage.show();
+        Router.loadScene(stage, "register");
     }
 }
+

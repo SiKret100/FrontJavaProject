@@ -2,19 +2,19 @@ package com.javaproject.frontjavaproject;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,6 +53,25 @@ public class ShowController implements Initializable {
     @FXML
     private TableColumn<HousingPricesModel, Integer> priceColumn;
 
+    @FXML
+    private ChoiceBox<String> choiceRegion;
+
+    @FXML
+    private ChoiceBox<String> choiceMarket;
+
+    @FXML
+    private ChoiceBox<String> choiceType;
+
+    private final String[] regions = {"WSZYSTKO","POLSKA", "LUBELSKIE", "MAZOWIECKIE", "MAŁOPOLSKIE",
+            "ŚLĄSKIE", "LUBUSKIE", "WIELKOPOLSKIE", "ZACHODNIOPOMORSKIE", "DOLNOŚLĄSKIE", "OPOLSKIE", "KUJAWSKO-POMORSKIE",
+            "POMORSKIE", "ŁODZKIE", "ŚWIĘTOKRZYSKIE", "PODKARPACKIE", "PODLASKIE", "MAZOWIECKIE"};
+
+    private final String[] markets = {"WSZYSTKO","RYNEK WTÓRNY", "RYNEK PIERWOTNY"};
+
+    private final String[] types = {"WSZYSTKO","DO 40 M2", "OD 40,1 DO 60 M2", "OD 60,1 DO 80 M2", "OD 80,1 M2"};
+
+    private JSONArray combinedArray = new JSONArray();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -62,6 +81,22 @@ public class ShowController implements Initializable {
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        //choiceRegion section
+        choiceRegion.getItems().addAll(regions);
+        choiceRegion.setOnAction(this::getRegion);//refernecja do metody getRegion
+        choiceRegion.setValue("Choose Region");
+
+        //choiceMarket
+        choiceMarket.getItems().addAll(markets);
+        choiceMarket.setOnAction(this::getMarket);
+        choiceMarket.setValue("Choose Market");
+
+        //choiceType
+        choiceType.getItems().addAll(types);
+        choiceType.setOnAction(this::getType);
+        choiceType.setValue("Choose Type");
+
         try{
             nameColumn.setOnEditCommit(event -> {
                 HousingPricesModel housing = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -70,7 +105,7 @@ public class ShowController implements Initializable {
                 try {
                     HousingController.updateHousingRecord(housing);
                 } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+                    AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
                 }
             });
 
@@ -82,7 +117,7 @@ public class ShowController implements Initializable {
                 try {
                     HousingController.updateHousingRecord(housing);
                 } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+                    AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
                 }
             });
 
@@ -93,35 +128,67 @@ public class ShowController implements Initializable {
                 try {
                     HousingController.updateHousingRecord(housing);
                 } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+                    AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
                 }
             });
 
-
-
-
             priceColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-
             priceColumn.setOnEditCommit(event -> {
                 HousingPricesModel housing = event.getRowValue();
                 housing.setPrice(event.getNewValue());
-                try{
+                try {
                     HousingController.updateHousingRecord(housing);
                 } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+                    AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
                 }
             });
+
+
         }
         catch(Exception e){
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
         }
 
     }
 
+    public void getType(ActionEvent actionEvent) {
+        String myType = choiceType.getValue().toLowerCase();
+    }
+
+    public void getRegion(ActionEvent event) {
+        String myRegion = choiceRegion.getValue();
+    }
+
+    public void getMarket(ActionEvent event) {
+        String myMarket = choiceMarket.getValue().toLowerCase();
+    }
+
     public void handleFetchAll() throws Exception {
         try {
-            JSONArray combinedArray = new JSONArray();
-            HousingController.fetchHousing(null, null, null, combinedArray);
+
+
+            combinedArray.clear();  // to masz zerowac
+
+            String region = choiceRegion.getValue();
+            String market = choiceMarket.getValue().toLowerCase();
+            String type = choiceType.getValue().toLowerCase();
+
+            System.out.println("przed:");
+            System.out.println(region+" "+market+" "+type);
+
+            if(region.equals("WSZYSTKO") || region.equals("Choose Region")){
+                region = null;
+            }
+            if(market.equals("wszystko") || market.equals("choose market")){
+                market = null;
+            }
+            if(type.equals("wszystko") || type.equals("choose type")){
+                type = null;
+            }
+
+            tableView.getItems().clear();
+
+            HousingController.fetchHousing(region, market, type, combinedArray);
 
             List<JSONObject> jsonObjectList = new ArrayList<>();
 
@@ -129,7 +196,7 @@ public class ShowController implements Initializable {
                 jsonObjectList.add(combinedArray.getJSONObject(i));
             }
 
-            //System.out.println(jsonObjectList.size());
+            System.out.println(jsonObjectList.size());
 
             jsonObjectList.sort(Comparator.comparingInt(i -> i.getInt("year")));
 
@@ -148,27 +215,13 @@ public class ShowController implements Initializable {
             }
 
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
         }
     }
 
-
-
-    public void handleDashboardRedirect(ActionEvent event) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("dashboard-view.fxml"));
-        Scene dashboardScene = new Scene(fxmlLoader.load());
-
+    public void loadDashboardScene(ActionEvent event) throws Exception {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(dashboardScene);
-        stage.setTitle("Dashboard");
-        stage.show();
-    }
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
+        Router.loadScene(stage, "dashboard");
     }
 
     public void handleDelete(ActionEvent event) throws Exception {
@@ -185,12 +238,38 @@ public class ShowController implements Initializable {
                         HousingController.deleteHousingRecord(selectedHousing.getId());
                         tableView.getItems().remove(selectedHousing);
                     } catch (Exception e) {
-                        showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+                        AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
                     }
                 }
             });
         } else {
-            showAlert(Alert.AlertType.WARNING, "Warning", "No record selected for deletion.");
+            AlertManager.showAlert(Alert.AlertType.WARNING, "Warning", "No record selected for deletion.");
+        }
+    }
+
+    public void handleExport(ActionEvent event) throws Exception {
+        if (combinedArray.length() == 0) {
+            AlertManager.showAlert(Alert.AlertType.WARNING, "Warning", "No data available to export.");
+            return;
+        }
+
+          DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Directory to Save JSON File");
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        File selectedDirectory = directoryChooser.showDialog(stage);
+
+        if (selectedDirectory != null) {
+            File jsonFile = new File(selectedDirectory, "data.json");
+
+            try (FileWriter dataWriter = new FileWriter(jsonFile)) {
+                dataWriter.write(combinedArray.toString(4));
+                AlertManager.showAlert(Alert.AlertType.INFORMATION, "Success", "Data exported successfully to " + jsonFile.getAbsolutePath());
+            } catch (IOException e) {
+                AlertManager.showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            }
+        } else {
+            AlertManager.showAlert(Alert.AlertType.WARNING, "Warning", "No directory selected. Export cancelled.");
         }
     }
 

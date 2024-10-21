@@ -34,7 +34,6 @@ public class RegisterController {
     @FXML
     private Button registerButton;
 
-
     public boolean dataValidation(ActionEvent event) throws IOException {
         String login = loginField.getText();
         String password = passwordField.getText();
@@ -99,21 +98,9 @@ public class RegisterController {
         }
     }
 
-
-
-    public void handleLoginRedirect(ActionEvent event) throws IOException {
-        loadLoginScene(event);
-    }
-
-    private void loadLoginScene(ActionEvent event) throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login-view.fxml"));
-        Scene dashboardScene = new Scene(fxmlLoader.load());
-
+    public void loadLoginScene(ActionEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(dashboardScene);
-        stage.setTitle("Register");
-        stage.show();
+        Router.loadScene(stage, "login");
     }
 
 }

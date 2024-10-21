@@ -27,7 +27,7 @@
             </Label>
             <TextField fx:id="loginField" layoutX="161.0" layoutY="106.0" promptText="Login" />
             <PasswordField fx:id="passwordField" layoutX="161.0" layoutY="154.0" promptText="Password" />
-            <Button fx:id="backButton" layoutX="134.0" layoutY="247.0" mnemonicParsing="false" onAction="#handleLoginRedirect" style="-fx-background-color: #61FF6A;" text="Back">
+            <Button fx:id="backButton" layoutX="134.0" layoutY="247.0" mnemonicParsing="false" onAction="#loadLoginScene" style="-fx-background-color: #61FF6A;" text="Back">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>

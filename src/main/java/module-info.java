@@ -10,6 +10,7 @@ module com.javaproject.frontjavaproject {
     requires jdk.compiler;
     requires gson;
     requires org.json;
+    requires java.desktop;
 
     opens com.javaproject.frontjavaproject to javafx.fxml;
     exports com.javaproject.frontjavaproject;

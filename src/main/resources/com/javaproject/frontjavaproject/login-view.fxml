@@ -33,7 +33,7 @@
                </font>
             </Button>
             <Label fx:id="errorLabel" layoutX="36.0" layoutY="288.0" prefHeight="82.0" prefWidth="277.0" textAlignment="CENTER" textFill="RED" wrapText="true" />
-            <Button fx:id="registerButton" layoutX="216.0" layoutY="247.0" mnemonicParsing="false" onAction="#handleRegisterRedirect" style="-fx-background-color: #61FF6A;" text="Register">
+            <Button fx:id="registerButton" layoutX="216.0" layoutY="247.0" mnemonicParsing="false" onAction="#loadRegisterScene" style="-fx-background-color: #61FF6A;" text="Register">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>

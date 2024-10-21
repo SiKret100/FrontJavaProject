@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javaproject.frontjavaproject.ShowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javaproject.frontjavaproject.ShowController">
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="getAllButton" mnemonicParsing="false" onAction="#handleFetchAll" text="Get All" />
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleDashboardRedirect" prefHeight="25.0" prefWidth="52.0" text="Back" />
+            <Button fx:id="getAllButton" mnemonicParsing="false" onAction="#handleFetchAll" text="Fetch" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#loadDashboardScene" prefHeight="25.0" prefWidth="52.0" text="Back" />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete" text="Delete" />
+            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#handleExport" text="Export Data" />
+            <Separator opacity="0.0" prefHeight="30.0" prefWidth="123.0" />
+            <ChoiceBox fx:id="choiceRegion" prefHeight="26.0" prefWidth="130.0" />
+            <ChoiceBox fx:id="choiceMarket" prefHeight="26.0" prefWidth="130.0" />
+            <ChoiceBox fx:id="choiceType" prefHeight="26.0" prefWidth="130.0" />
         </items>
       </ToolBar>
    </top>

@@ -13,25 +13,26 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javaproject.frontjavaproject.DashboardController">
    <top>
-      <ToolBar prefHeight="79.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+      <ToolBar prefHeight="61.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
         <items>
             <Label text="Settings">
                <font>
                   <Font name="Helvetica Neue Bold" size="30.0" />
                </font>
             </Label>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="50.0" />
+            <Separator orientation="VERTICAL" prefHeight="69.0" prefWidth="12.0" />
             <ChoiceBox fx:id="choiceRegion" prefHeight="25.0" prefWidth="140.0" />
             <ChoiceBox fx:id="choiceMarket" prefHeight="25.0" prefWidth="140.0" />
             <ChoiceBox fx:id="choiceType" prefHeight="25.0" prefWidth="140.0" />
+            <Separator opacity="0.0" prefHeight="69.0" prefWidth="123.0" />
             <Button fx:id="fetchButton" mnemonicParsing="false" onAction="#fetchHousingPrices" text="Show chart" />
-            <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddRedirect" text="Add Data" />
+            <Button fx:id="addButton" mnemonicParsing="false" onAction="#loadAddScene" text="Add Data" />
             <Button fx:id="showRecordsButton" mnemonicParsing="false" onAction="#handleShowRedirect" text="Show records" />
         </items>
       </ToolBar>
    </top>
    <center>
-      <LineChart fx:id="lineChart" BorderPane.alignment="CENTER">
+      <LineChart fx:id="lineChart" prefHeight="899.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
