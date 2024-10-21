@@ -1,24 +1,18 @@
-package com.javaproject.frontjavaproject;
+package com.javaproject.frontjavaproject.viewcontrollers;
 
+import com.javaproject.frontjavaproject.AlertManager;
+import com.javaproject.frontjavaproject.HousingController;
+import com.javaproject.frontjavaproject.NotificationClass;
+import com.javaproject.frontjavaproject.Router;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.skin.ChoiceBoxSkin;
 import javafx.stage.Stage;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class AddController implements Initializable {

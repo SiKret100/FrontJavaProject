@@ -1,5 +1,9 @@
-package com.javaproject.frontjavaproject;
+package com.javaproject.frontjavaproject.viewcontrollers;
 
+import com.javaproject.frontjavaproject.AlertManager;
+import com.javaproject.frontjavaproject.HousingController;
+import com.javaproject.frontjavaproject.HousingPricesModel;
+import com.javaproject.frontjavaproject.Router;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -14,4 +14,8 @@ module com.javaproject.frontjavaproject {
 
     opens com.javaproject.frontjavaproject to javafx.fxml;
     exports com.javaproject.frontjavaproject;
+    exports com.javaproject.frontjavaproject.viewcontrollers;
+    opens com.javaproject.frontjavaproject.viewcontrollers to javafx.fxml;
+    exports com.javaproject.frontjavaproject.authorization;
+    opens com.javaproject.frontjavaproject.authorization to javafx.fxml;
 }

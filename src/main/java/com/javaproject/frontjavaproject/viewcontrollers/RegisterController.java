@@ -1,10 +1,9 @@
-package com.javaproject.frontjavaproject;
+package com.javaproject.frontjavaproject.viewcontrollers;
 
+import com.javaproject.frontjavaproject.Router;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;

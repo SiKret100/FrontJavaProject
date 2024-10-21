@@ -1,4 +1,4 @@
-package com.javaproject.frontjavaproject;
+package com.javaproject.frontjavaproject.authorization;
 
 public class AuthManager {
 

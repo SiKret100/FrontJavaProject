@@ -1,6 +1,6 @@
 package com.javaproject.frontjavaproject;
 
-import javafx.scene.control.Alert;
+import com.javaproject.frontjavaproject.authorization.AuthManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.StringJoiner;
 
 public class HousingController {

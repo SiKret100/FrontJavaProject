@@ -1,11 +1,10 @@
-package com.javaproject.frontjavaproject;
+package com.javaproject.frontjavaproject.viewcontrollers;
 
-import com.google.gson.JsonObject;
+import com.javaproject.frontjavaproject.authorization.AuthManager;
+import com.javaproject.frontjavaproject.Router;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -18,7 +17,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 public class LoginController {
 
